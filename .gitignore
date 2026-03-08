@@ -1,0 +1,19 @@
+#Pachete compilate
+*.class
+*.log
+*.jar
+*.war
+
+#Foldere de build
+target/
+out/
+bin/
+
+#IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# sistem de operare
+.DS_Store
+Thumbs.db
