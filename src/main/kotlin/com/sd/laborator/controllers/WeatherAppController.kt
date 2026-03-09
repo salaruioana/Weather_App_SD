@@ -32,6 +32,9 @@ class WeatherAppController {
     @ResponseBody
     fun getForecast(@PathVariable location: String): String {
 
+        if(blacklistService.isCurrentNodeRestricted()){
+            return "Acces interzis! Nu furnizam informatii pentru locatia dumneavoastra."
+        }
         if (!blacklistService.isLocationAllowed(location)) {
             return "Acces interzis! Informațiile meteo pentru zona \"$location\" sunt restricționate conform politicilor de securitate locale."
         }
