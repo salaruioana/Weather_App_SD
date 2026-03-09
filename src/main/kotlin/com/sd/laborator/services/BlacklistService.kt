@@ -9,7 +9,7 @@ class BlacklistService : BlacklistInterface{
     //lista
     // o modalitate de dezvoltare ar putea fi preluarea locatiilor restrictionate dintr-un fisier
     private val blacklist = listOf("bucharest","london","vienna")
-    private val blacklistedZones = listOf("tokyo","barcelona","iași")
+    private val blacklistedZones = listOf("tokyo","barcelona")
     override fun isLocationAllowed(locationName: String): Boolean{
         return !blacklist.any{it.equals(locationName, ignoreCase = true)}
     }
@@ -17,6 +17,7 @@ class BlacklistService : BlacklistInterface{
         return try{
             //detectam locatia serverului (nodului de calcul) prin IP
             //folosim un api gratuit de geolocalizare
+            // o implementare care sa respecte principiile SOLID ar folosi o interfata pentru acest serviciu.
             val myCity = URL("https://ipapi.co/city/").readText().trim().lowercase()
             println("Nodul de calcul se afla in $myCity")
             blacklistedZones.contains(myCity)

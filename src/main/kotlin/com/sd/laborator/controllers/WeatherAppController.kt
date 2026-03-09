@@ -38,7 +38,7 @@ class WeatherAppController {
         if (!blacklistService.isLocationAllowed(location)) {
             return "Acces interzis! Informațiile meteo pentru zona \"$location\" sunt restricționate conform politicilor de securitate locale."
         }
-        // se incearca preluarea WOEID-ului locaţiei primite in URL
+        // se incearca preluarea locaţiei primite in URL
         val locationModel: LocationModel? = locationSearchService.getLocationId(location)
 
         // dacă locaţia nu a fost găsită, răspunsul va fi corespunzător
