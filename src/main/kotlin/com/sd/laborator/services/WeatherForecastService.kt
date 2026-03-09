@@ -1,6 +1,8 @@
 package com.sd.laborator.services
 
+import com.sd.laborator.interfaces.TimeServiceInterface
 import com.sd.laborator.interfaces.WeatherForecastInterface
+import com.sd.laborator.pojo.LocationModel
 import com.sd.laborator.pojo.WeatherForecastData
 import org.json.JSONObject
 import org.springframework.stereotype.Service
@@ -8,31 +10,33 @@ import java.net.URL
 import kotlin.math.roundToInt
 
 @Service
-class WeatherForecastService (private val timeService: TimeService) : WeatherForecastInterface {
-    override fun getForecastData(locationId: Int): WeatherForecastData {
+class WeatherForecastService (private val timeService: TimeServiceInterface) : WeatherForecastInterface {
+    override fun getForecastData(location: LocationModel): WeatherForecastData {
         // ID-ul locaţiei nu trebuie codificat, deoarece este numeric
-        val forecastDataURL = URL("https://www.metaweather.com/api/location/$locationId/")
+        val forecastDataURL = URL("https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current_weather=true")
 
         // preluare conţinut răspuns HTTP la o cerere GET către URL-ul de mai sus
         val rawResponse: String = forecastDataURL.readText()
 
         // parsare obiect JSON primit
         val responseRootObject = JSONObject(rawResponse)
-        val weatherDataObject = responseRootObject.getJSONArray("consolidated_weather").getJSONObject(0)
+        val current = responseRootObject.getJSONObject("current_weather")
 
-        // construire şi returnare obiect POJO care încapsulează datele meteo
         return WeatherForecastData(
-            location = responseRootObject.getString("title"),
+            latitude = location.latitude,
+            longitude = location.longitude,
             date = timeService.getCurrentTime(),
-            weatherState = weatherDataObject.getString("weather_state_name"),
-            weatherStateIconURL =
-                "https://www.metaweather.com/static/img/weather/png/${weatherDataObject.getString("weather_state_abbr")}.png",
-            windDirection = weatherDataObject.getString("wind_direction_compass"),
-            windSpeed = weatherDataObject.getFloat("wind_speed").roundToInt(),
-            minTemp = weatherDataObject.getFloat("min_temp").roundToInt(),
-            maxTemp = weatherDataObject.getFloat("max_temp").roundToInt(),
-            currentTemp = weatherDataObject.getFloat("the_temp").roundToInt(),
-            humidity = weatherDataObject.getFloat("humidity").roundToInt()
+            temperature = current.getDouble("temperature").roundToInt(),
+            windSpeed = current.getDouble("windspeed"),
+            conditionCode = current.getInt("weathercode"),
+            description = decodeWmoCode(current.getInt("weathercode"))
         )
+    }
+
+    private fun decodeWmoCode(code: Int): String = when(code) {
+        0 -> "Cer senin"
+        1, 2, 3 -> "Noros"
+        61, 63, 65 -> "Ploaie"
+        else -> "Condiții variate ($code)"
     }
 }

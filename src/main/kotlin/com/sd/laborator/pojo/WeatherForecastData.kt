@@ -1,14 +1,12 @@
 package com.sd.laborator.pojo
 
+//data class generează automat Getter, Setter, equals(), hashCode() și toString().
 data class WeatherForecastData (
-    var location: String,
+    var latitude: Double,
+    var longitude: Double,
     var date: String,
-    var weatherState: String,
-    var weatherStateIconURL: String,
-    var windDirection: String,
-    var windSpeed: Int, // km/h
-    var minTemp: Int, // grade celsius
-    var maxTemp: Int,
-    var currentTemp: Int,
-    var humidity: Int // procent
+    var temperature: Int,
+    var windSpeed: Double,
+    var conditionCode: Int, // Codul WMO
+    var description: String
 )
