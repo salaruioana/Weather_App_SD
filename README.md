@@ -9,3 +9,9 @@ Ne vom concentra pe respectarea principiilor SOLID, intelegerea notiunilor:
     Ex: Vom impleemnta TimeInterface pentru a decupla serviciul de prognoza de ceasul sistemului.
 *Open/Closed Principle (Deschis la dezvoltare, Inchis la modificari): permite adaugarea de noi furnizori meteo fara a modifica controller-ul
 *Segregarea interfectelor: Interfete atomice pentru cautarea locatiei si prognoza.
+-> Am implementat clasa LocationModel, pentru a usura migrarea de la o implementare care localizeaza int-un anumit format informatia de altul
+
+## Introduceți un nou serviciu pentru filtrarea în funcție de zona geografică a accesului larespectivele informații (există un black list furnizat ca referință/link relativ/absolut/url)dezone pentru care aplicația va anunța că nu este permis accesul la astfel de informații pentruzona x (x conform locației reale în care se află nodul de calcul (de fapt cea stabilitălanivellocal pentru sistemul de operare)))
+-> La primirea unei cereri, trebuie sa verificam acea locatie intr-o lista neagra.
+    ->BlacklistService+ BlacklistInterface :Vom crea o interfață și o implementare care să verifice dacă locația curentă este permisă.
+    ->La primirea cererii, verificam in primul rand daca este permis accesul la informatii despre acea locatie.

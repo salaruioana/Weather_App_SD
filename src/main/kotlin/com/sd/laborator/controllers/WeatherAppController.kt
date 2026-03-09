@@ -1,5 +1,6 @@
 package com.sd.laborator.controllers
 
+import com.sd.laborator.interfaces.BlacklistInterface
 import com.sd.laborator.interfaces.LocationSearchInterface
 import com.sd.laborator.interfaces.WeatherForecastInterface
 import com.sd.laborator.pojo.LocationModel
@@ -22,11 +23,18 @@ class WeatherAppController {
     @Autowired
     private lateinit var weatherForecastService: WeatherForecastInterface
 
+    @Autowired
+    private lateinit var blacklistService: BlacklistInterface // Injectam filtrul
+
     //@RequestMapping: Înlocuiește acele zeci de linii din web.xml. Ai pus @PathVariable location, deci dacă accesezi /getforecast/Iasi, variabila location va deveni "Iasi".
     @RequestMapping("/getforecast/{location}", method = [RequestMethod.GET])
     //@ResponseBody: Îi spune lui Spring: "Nu căuta o pagină HTML, ci scrie acest String direct în corpul răspunsului HTTP".
     @ResponseBody
     fun getForecast(@PathVariable location: String): String {
+
+        if (!blacklistService.isLocationAllowed(location)) {
+            return "Acces interzis! Informațiile meteo pentru zona \"$location\" sunt restricționate conform politicilor de securitate locale."
+        }
         // se incearca preluarea WOEID-ului locaţiei primite in URL
         val locationModel: LocationModel? = locationSearchService.getLocationId(location)
 
