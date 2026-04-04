@@ -1,17 +1,45 @@
-# Weather App
-Acest proiect a fost realizat in cadrul laboratorului 3 de sisteme distribuite.
-Aceasta aplicatie simuleaza un serviciu meteo si vom realiza refactorizari pentru a o imbunatati.
-Structura initiala:
--- de adaugat diagrama din laborator
-In cadrul acestui laborator, vom lucra cu containerul Spring, cu o structura alcatuita din controllere, interfete si servicii.
-Ne vom concentra pe respectarea principiilor SOLID, intelegerea notiunilor:
-*Inversarea dependentelor: Utilizarea interfetelor (dependenta de interfete) si nu a implemetarilor acestora -> decuplarea serviciilor.
-    Ex: Vom impleemnta TimeInterface pentru a decupla serviciul de prognoza de ceasul sistemului.
-*Open/Closed Principle (Deschis la dezvoltare, Inchis la modificari): permite adaugarea de noi furnizori meteo fara a modifica controller-ul
-*Segregarea interfectelor: Interfete atomice pentru cautarea locatiei si prognoza.
--> Am implementat clasa LocationModel, pentru a usura migrarea de la o implementare care localizeaza int-un anumit format informatia de altul
+# Geospatial Weather Service
 
-## Introduceți un nou serviciu pentru filtrarea în funcție de zona geografică a accesului larespectivele informații (există un black list furnizat ca referință/link relativ/absolut/url)dezone pentru care aplicația va anunța că nu este permis accesul la astfel de informații pentruzona x (x conform locației reale în care se află nodul de calcul (de fapt cea stabilitălanivellocal pentru sistemul de operare)))
--> La primirea unei cereri, trebuie sa verificam acea locatie intr-o lista neagra.
-    ->BlacklistService+ BlacklistInterface :Vom crea o interfață și o implementare care să verifice dacă locația curentă este permisă.
-    ->La primirea cererii, verificam in primul rand daca este permis accesul la informatii despre acea locatie.
+A Spring Boot weather forecasting application built as part of a Distributed Systems laboratory, refactored to demonstrate clean architecture principles and SOLID design.
+
+## Overview
+
+The project starts from a basic weather service structure and progressively applies software engineering best practices — decoupling components through interfaces, enforcing SOLID principles, and introducing a geospatial access control layer.
+
+## Architecture
+
+The application is organized around the Spring container with the following layers:
+
+- **Controllers** — handle incoming HTTP requests and delegate to services
+- **Interfaces** — define contracts between components to enable decoupling
+- **Services** — contain business logic, each implementing a dedicated interface
+
+## Key Design Decisions
+
+### Dependency Inversion
+Components depend on interfaces rather than concrete implementations, making them easy to swap and test in isolation. For example, `TimeInterface` decouples the forecast service from the system clock, allowing time to be injected or mocked independently.
+
+### Open/Closed Principle
+New weather providers can be added without modifying the controller. The system is open to extension but closed to modification at the controller level.
+
+### Interface Segregation
+Interfaces are kept atomic and focused — location lookup and weather forecasting are defined as separate contracts. A dedicated `LocationModel` class acts as a translation layer, making it straightforward to migrate between different location data formats.
+
+## Geospatial Blacklist Service
+
+A geographic access control feature was introduced to restrict weather data based on the physical location of the requesting node (as determined by the local OS configuration).
+
+**How it works:**
+1. On each incoming request, the node's current location is resolved.
+2. Before processing, the location is checked against a configurable blacklist (provided as a relative path, absolute path, or URL).
+3. If the location is on the blacklist, the service returns an access denied response indicating that information for that region is unavailable.
+
+**Components:**
+- `BlacklistInterface` — defines the contract for location validation
+- `BlacklistService` — implements the interface, loads the blacklist source, and performs the lookup
+
+## Technologies
+
+- Java
+- Spring Boot
+- OOP / SOLID Principles
